@@ -7,7 +7,7 @@ use Facebook\WebDriver\WebDriverBy;
 
 class SeleniumTest {
     public function testExample() {
-        $serverUrl = 'http://localhost:4444/wd/hub'; // Selenium server URL
+        $serverUrl = 'http://0.0.0.0:4444/wd/hub'; // Selenium server URL
         $driver = RemoteWebDriver::create($serverUrl, DesiredCapabilities::chrome());
 
         // Navigate to the PHP application
