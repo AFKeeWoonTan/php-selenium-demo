@@ -12,14 +12,13 @@ jobs:
   selenium:
     runs-on: ubuntu-latest
 
-    services:
-      selenium:
-        image: selenium/standalone-chrome:latest
-        options: --network host # Use host network to resolve 'host.docker.internal'
-        ports:
-          - 4444:4444
-
     steps:
+      - name: Start Selenium container
+        run: |
+          docker run --name selenium-standalone -d \
+          --network host \
+          -p 4444:4444 selenium/standalone-chrome:latest
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
