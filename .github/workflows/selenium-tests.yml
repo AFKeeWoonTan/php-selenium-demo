@@ -15,6 +15,7 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome:latest
+        options: --network host # Use host network to resolve 'host.docker.internal'
         ports:
           - 4444:4444
 
@@ -31,7 +32,7 @@ jobs:
         run: composer install
 
       - name: Start PHP server
-        run: php -S 127.0.0.1:8000 -t . &  # Start PHP server in the background
+        run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
 
       - name: List open ports (for debugging)
         run: netstat -tuln
