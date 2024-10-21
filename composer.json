@@ -1,0 +1,17 @@
+{
+    "name": "cloak/php-selenium-demo",
+    "autoload": {
+        "psr-4": {
+            "Cloak\\PhpSeleniumDemo\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Marcus Tan",
+            "email": "marcus@cloakapps.com"
+        }
+    ],
+    "require": {
+        "php-webdriver/webdriver": "^1.15"
+    }
+}
