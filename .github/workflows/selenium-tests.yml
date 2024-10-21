@@ -15,8 +15,6 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome:latest
-        options: > 
-          --network-alias=selenium
         ports:
           - 4444:4444
 
