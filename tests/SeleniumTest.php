@@ -12,7 +12,8 @@ class SeleniumTest {
 
         // Navigate to the PHP application
         //$driver->get('http://localhost:8000/index.php');
-	$driver->get('http://host.docker.internal:8000/index.php');
+	//$driver->get('http://host.docker.internal:8000/index.php');
+        $driver->get('http://127.0.0.1:8000/index.php');
 
         // Wait and get the text of the PHP link
         $element = $driver->findElement(WebDriverBy::className('php-link'));
