@@ -12,12 +12,19 @@ jobs:
   selenium:
     runs-on: ubuntu-latest
 
+    services:
+      selenium:
+        image: selenium/standalone-chrome
+        options: --network host # Ensures host network access in GitHub Actions
+        ports:
+          - 4444:4444
+
     steps:
-      - name: Start Selenium container
-        run: |
-          docker run --name selenium-standalone -d \
-          --network host \
-          -p 4444:4444 selenium/standalone-chrome:latest
+#      - name: Start Selenium container
+#        run: |
+#          docker run --name selenium-standalone -d \
+#          --network host \
+#          -p 4444:4444 selenium/standalone-chrome:latest
 
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -34,10 +41,10 @@ jobs:
         run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
 
       - name: List open ports (for debugging)
-        run: netstat -tuln
+        run: netstat -tuln;ls -ltra .
 
       - name: Wait for the server to be up
-        run: sleep 5  # Wait for the server to start up
+        run: sleep 15  # Wait for the server to start up
 
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
