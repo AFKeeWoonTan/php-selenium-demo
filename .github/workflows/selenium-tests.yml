@@ -33,12 +33,11 @@ jobs:
       - name: Start PHP server
         run: php -S 127.0.0.1:8000 -t . &  # Start PHP server in the background
 
+      - name: List open ports (for debugging)
+        run: netstat -tuln
+
       - name: Wait for the server to be up
         run: sleep 5  # Wait for the server to start up
 
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
-
-      - name: List open ports (for debugging)
-        run: netstat -tuln
-
