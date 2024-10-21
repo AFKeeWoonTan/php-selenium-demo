@@ -15,7 +15,6 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome
-        options: --network host # Ensures host network access in GitHub Actions
         ports:
           - 4444:4444
 
