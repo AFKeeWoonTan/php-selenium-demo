@@ -33,6 +33,9 @@ jobs:
       - name: Start PHP server
         run: php -S localhost:8000 -t . &
       
+      - name: Wait for the server to be up
+        run: sleep 5 # Wait for 5 seconds to ensure the server is running
+
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
 
