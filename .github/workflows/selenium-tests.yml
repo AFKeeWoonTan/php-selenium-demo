@@ -39,3 +39,6 @@ jobs:
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
 
+      - name: List open ports (for debugging)
+        run: netstat -tuln
+
