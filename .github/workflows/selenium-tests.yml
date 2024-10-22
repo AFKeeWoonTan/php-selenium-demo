@@ -17,11 +17,6 @@ jobs:
         image: selenium/standalone-chrome
         ports:
           - 4444:4444
-    services:
-      selenium:
-        image: selenium/standalone-chrome
-        ports:
-          - 4444:4444
         networks:
           - my-network
       php:
