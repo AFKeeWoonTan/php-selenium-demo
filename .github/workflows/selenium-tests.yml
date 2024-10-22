@@ -20,12 +20,13 @@ jobs:
           - 4444:4444
       
       php:
-        image: php:8.0-apache
+        image: php:7.4-cli
         options: --network-alias=php
         ports:
           - 8000:8000
         volumes:
           - ./:/var/www/html/
+        command: php -S 0.0.0.0:8000 -t /var/www/html
 
     steps:
 #      - name: Start Selenium container
@@ -55,11 +56,16 @@ jobs:
         run: |
           sudo netstat -tuln | grep 8000 || echo "Port 8000 is not open"
 
-      - name: Run a curl test from the Selenium container
-        run: docker exec selenium curl http://localhost:8000/index.php || echo "Connection failed"
+       - name: Wait for PHP service to be ready
+      run: |
+        timeout 5s bash -c "until curl -s http://php:8000/index.php; do echo waiting for php service; sleep 2; done"
+
+      - name: Wait for Selenium service to be ready
+        run: |
+        timeout 5s bash -c "until curl -s http://localhost:4444/wd/hub/status; do echo waiting for selenium service; sleep 2; done"
 
       - name: Wait for the server to be up
-        run: sleep 15  # Wait for the server to start up
+        run: sleep 5  # Wait for the server to start up
 
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
