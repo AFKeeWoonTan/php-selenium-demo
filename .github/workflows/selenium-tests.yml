@@ -15,13 +15,13 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome
-        container_name: selenium
+        options: --network-alias=selenium
         ports:
           - 4444:4444
       
       php:
         image: php:8.0-apache
-        container_name: php
+        options: --network-alias=php
         ports:
           - 8000:8000
         volumes:
