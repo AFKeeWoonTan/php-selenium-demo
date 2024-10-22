@@ -17,18 +17,13 @@ jobs:
         image: selenium/standalone-chrome
         ports:
           - 4444:4444
-        networks:
-          - my-network
+      
       php:
         image: php:8.0-apache
         ports:
           - 8000:8000
-        networks:
-          - my-network
-
-    networks:
-      my-network:
-        driver: bridge
+        volumes:
+          - ./:/var/www/html/
 
     steps:
 #      - name: Start Selenium container
