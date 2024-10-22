@@ -32,7 +32,7 @@ jobs:
 
       - name: Prepare artifacts
         run: |
-          tar -czvf www-build.tar.gz www vendor test 
+          tar -czvf www-build.tar.gz . vendor test 
           ls -l
 
       - name: Upload artifacts
