@@ -51,22 +51,8 @@ jobs:
       
     steps:
 
-      - name: Download built files
-        uses: actions/download-artifact@v3
-        with:
-          name: www-build
-
-      - name: Extract artifacts
-        run: |
-          tar -xzf www-build.tar.gz
-          ls -l
-
-      - name: Copy files to web root
-        run: |
-          cp -R ./www/* /var/www/html
-
-      - name: Restart apache server
-        run: service apache2 restart
+#      - name: Restart apache server
+#        run: service apache2 restart
 
       - name: Check if site is accessible
         run: |
