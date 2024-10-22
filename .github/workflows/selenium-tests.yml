@@ -10,7 +10,17 @@ on:
 
 jobs:
   selenium:
+    needs: build
     runs-on: ubuntu-latest
+    container: 
+      image: php:7.4-apache
+      ports: 
+        - 80:80
+      options: --network-alias=testserver 
+
+  env:
+    TEST_BASE_URL: http://testserver
+    SELENIUM_HOST: http://selenium:4444/wd/hub
 
     services:
       selenium:
@@ -19,35 +29,33 @@ jobs:
         ports:
           - 4444:4444
       
-      php:
-        image: php:7.4-cli
-        options: --network-alias=php
-        ports:
-          - 8000:8000
-        volumes:
-          - ./:/var/www/html/
-        command: php -S 0.0.0.0:8000 -t /var/www/html
-
     steps:
-#      - name: Start Selenium container
-#        run: |
-#          docker run --name selenium-standalone -d \
-#          --network host \
-#          -p 4444:4444 selenium/standalone-chrome:latest
+      - name: Download built files
+        uses: actions/download-artifact@v2
+        with:
+          name: www-build
+
+      - name: Extract artifacts
+        run: |
+          tar -xzf www-build.tar.gz
+          ls -l
+
+      - name: Copy files to web root
+        run: |
+          cp -R ./www/* /var/www/html
+
+      - name: Restart apache server
+        run: service apache2 restart
+
+      - name: Check if site is accessible
+        run: |
+          curl $TEST_BASE_URL
 
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.0'
-
       - name: Install dependencies
         run: composer install
-
-#      - name: Start PHP server
-#        run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
 
       - name: List open ports (for debugging)
         run: netstat -tuln;ls -ltra .;docker ps
@@ -55,14 +63,6 @@ jobs:
       - name: Check if port 8000 is open
         run: |
           sudo netstat -tuln | grep 8000 || echo "Port 8000 is not open"
-
-       - name: Wait for PHP service to be ready
-      run: |
-        timeout 5s bash -c "until curl -s http://php:8000/index.php; do echo waiting for php service; sleep 2; done"
-
-      - name: Wait for Selenium service to be ready
-        run: |
-        timeout 5s bash -c "until curl -s http://localhost:4444/wd/hub/status; do echo waiting for selenium service; sleep 2; done"
 
       - name: Wait for the server to be up
         run: sleep 5  # Wait for the server to start up
