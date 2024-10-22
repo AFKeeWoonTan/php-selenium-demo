@@ -37,7 +37,8 @@ jobs:
       image: php:7.4-apache
       ports: 
         - 80:80
-      options: --network-alias=testserver 
+      options: --network-alias=testserver
+
     env:
       TEST_BASE_URL: http://testserver
       SELENIUM_HOST: http://selenium:4444/wd/hub
@@ -45,7 +46,7 @@ jobs:
     services:
       selenium:
         image: selenium/standalone-chrome
-        options: --network-alias=selenium
+        # options: --health-cmd "curl http://selenium:4444" --health-interval=5s
         ports:
           - 4444:4444
       
@@ -61,9 +62,9 @@ jobs:
       - name: List open ports (for debugging)
         run: netstat -tuln;ls -ltra .;docker ps
 
-      - name: Check if port 8000 is open
+      - name: Check if port 80 is open
         run: |
-          sudo netstat -tuln | grep 8000 || echo "Port 8000 is not open"
+          sudo netstat -tuln | grep 80 || echo "Port 80 is not open"
 
       - name: Wait for the server to be up
         run: sleep 5  # Wait for the server to start up
