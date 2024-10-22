@@ -17,6 +17,23 @@ jobs:
         image: selenium/standalone-chrome
         ports:
           - 4444:4444
+    services:
+      selenium:
+        image: selenium/standalone-chrome
+        ports:
+          - 4444:4444
+        networks:
+          - my-network
+      php:
+        image: php:8.0-apache
+        ports:
+          - 8000:8000
+        networks:
+          - my-network
+
+    networks:
+      my-network:
+        driver: bridge
 
     steps:
 #      - name: Start Selenium container
@@ -36,8 +53,8 @@ jobs:
       - name: Install dependencies
         run: composer install
 
-      - name: Start PHP server
-        run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
+#      - name: Start PHP server
+#        run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
 
       - name: List open ports (for debugging)
         run: netstat -tuln;ls -ltra .
@@ -45,6 +62,9 @@ jobs:
       - name: Check if port 8000 is open
         run: |
           sudo netstat -tuln | grep 8000 || echo "Port 8000 is not open"
+
+      - name: Run a curl test from the Selenium container
+        run: docker exec selenium curl http://localhost:8000/index.php || echo "Connection failed"
 
       - name: Wait for the server to be up
         run: sleep 15  # Wait for the server to start up
