@@ -52,21 +52,22 @@ jobs:
       
     steps:
 
-      - name: Restart apache server
-        run: service apache2 restart
-
       - name: List open ports (for debugging)
-        run: netstat -tuln;ls -ltra .;docker ps
-
-      - name: Check if port 80 is open
         run: |
-          sudo netstat -tuln | grep 80 || echo "Port 80 is not open"
+          echo "Current Docker containers:"
+          docker ps
 
       - name: Check if site is accessible
-        run: curl $TEST_BASE_URL
+        run: |
+          for i in {1..10}; do
+            curl -s $TEST_BASE_URL && break || sleep 3
+          done
 
-      - name: Wait for the server to be up
-        run: sleep 5  # Wait for the server to start up
+      - name: Wait for the Selenium server to be up
+        run: |
+          for i in {1..10}; do
+            curl -s $SELENIUM_HOST && break || sleep 3
+          done
 
       - name: Run Selenium tests
         run: php tests/SeleniumTest.php
