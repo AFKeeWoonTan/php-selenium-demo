@@ -30,6 +30,17 @@ jobs:
       - name: Install php dependencies
         run: composer install --prefer-dist
 
+      - name: Prepare artifacts
+        run: |
+          tar -czvf www-build.tar.gz www vendor test 
+          ls -l
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: www-build
+          path: www-build.tar.gz
+
   test:
     needs: build
     runs-on: ubuntu-latest
@@ -51,6 +62,22 @@ jobs:
           - 4444:4444
       
     steps:
+
+    - name: Download built files
+      uses: actions/download-artifact@v2
+      with:
+        name: www-build
+
+    - name: Extract artifacts
+      run: |
+        tar -xzvf www-build.tar.gz
+        ls -l
+
+    - name: Copy files to web root
+      run: cp -R ./www /var/www/html
+
+    - name: Restart apache server
+      run: service apache2 restart
 
     - name: Wait for the Apache server to be ready
       run: |
