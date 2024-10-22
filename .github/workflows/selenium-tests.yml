@@ -74,7 +74,7 @@ jobs:
         ls -l
 
     - name: Copy files to web root
-      run: cp -R ./www /var/www/html
+      run: cp ./index.php /var/www/html
 
     - name: Restart apache server
       run: service apache2 restart
