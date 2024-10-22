@@ -9,7 +9,28 @@ on:
       - main
 
 jobs:
-  selenium:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Get composer cache directory
+          id: composercache
+          run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache php dependencies
+        uses: actions/cache@v2
+        with:
+          path: ${{ steps.composercache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install php dependencies
+        run: composer install --prefer-dist
+
+  test:
     needs: build
     runs-on: ubuntu-latest
     container: 
@@ -17,10 +38,9 @@ jobs:
       ports: 
         - 80:80
       options: --network-alias=testserver 
-
-  env:
-    TEST_BASE_URL: http://testserver
-    SELENIUM_HOST: http://selenium:4444/wd/hub
+    env:
+      TEST_BASE_URL: http://testserver
+      SELENIUM_HOST: http://selenium:4444/wd/hub
 
     services:
       selenium:
@@ -30,6 +50,7 @@ jobs:
           - 4444:4444
       
     steps:
+
       - name: Download built files
         uses: actions/download-artifact@v2
         with:
@@ -50,12 +71,6 @@ jobs:
       - name: Check if site is accessible
         run: |
           curl $TEST_BASE_URL
-
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: composer install
 
       - name: List open ports (for debugging)
         run: netstat -tuln;ls -ltra .;docker ps
