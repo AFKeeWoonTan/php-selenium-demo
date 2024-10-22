@@ -47,7 +47,7 @@ jobs:
 #        run: php -S 0.0.0.0:8000 -t . &  # Bind PHP server to 0.0.0.0 for external access
 
       - name: List open ports (for debugging)
-        run: netstat -tuln;ls -ltra .
+        run: netstat -tuln;ls -ltra .;docker ps
 
       - name: Check if port 8000 is open
         run: |
